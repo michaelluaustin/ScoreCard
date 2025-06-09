@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Flag, Users, BarChart3, Club } from "lucide-react";
+import { Flag, Users, BarChart3, CheckSquare } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -10,7 +10,7 @@ export default function HomePage() {
       <Card className="w-full max-w-md shadow-2xl rounded-xl overflow-hidden">
         <div className="relative h-48 w-full bg-primary">
           <div className="absolute inset-0 flex flex-col items-center justify-center p-6">
-            <Club className="h-16 w-16 text-primary-foreground mb-2" />
+            <CheckSquare className="h-16 w-16 text-primary-foreground mb-2" />
             <h1 className="text-5xl font-bold text-primary-foreground font-headline tracking-tight">Par Score</h1>
             <p className="text-lg text-primary-foreground/90 mt-1">Your Modern Golf Scorecard</p>
           </div>
@@ -27,16 +27,7 @@ export default function HomePage() {
               <Users className="mr-2 h-5 w-5" /> Start New Round
             </Button>
           </Link>
-          <div className="grid grid-cols-2 gap-4 text-center">
-            <div className="flex flex-col items-center p-3 bg-muted/50 rounded-lg">
-              <Users className="h-8 w-8 text-primary mb-1" />
-              <span className="text-sm font-medium">Easy Player Setup</span>
-            </div>
-            <div className="flex flex-col items-center p-3 bg-muted/50 rounded-lg">
-              <BarChart3 className="h-8 w-8 text-primary mb-1" />
-              <span className="text-sm font-medium">Detailed Scorecards</span>
-            </div>
-          </div>
+          
         </CardContent>
       </Card>
        <p className="mt-8 text-sm text-muted-foreground">
