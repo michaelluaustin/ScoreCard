@@ -6,6 +6,7 @@ export interface Player {
 export interface Course {
   holeCount: 9 | 18;
   pars: number[];
+  name: string;
 }
 
 export interface Scores {

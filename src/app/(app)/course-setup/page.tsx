@@ -17,6 +17,7 @@ export default function CourseSetupPage() {
   const { players, course, dispatch } = useGameContext();
   const [holeCount, setHoleCount] = useState<'9' | '18'>(course?.holeCount === 18 ? '18' : '9');
   const [pars, setPars] = useState< (number | string)[]>([]);
+  const [courseName, setCourseName] = useState(course?.name || '');
   const router = useRouter();
   const { toast } = useToast();
 
@@ -55,9 +56,19 @@ export default function CourseSetupPage() {
       return;
     }
 
+    if (!courseName.trim()) {
+      toast({
+        title: "Course Name Required",
+        description: "Please enter a name for the course.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     const newCourse: Course = {
       holeCount: numHoles as 9 | 18,
       pars: parsedPars,
+      name: courseName.trim(),
     };
     dispatch({ type: 'SET_COURSE', payload: newCourse });
     router.push('/round/0'); // Start at hole 0 (first hole)
@@ -74,6 +85,16 @@ export default function CourseSetupPage() {
           <CardDescription>Select the number of holes and enter the par for each hole.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
+          <div>
+            <Label htmlFor="course-name" className="text-base block mb-2">Course Name</Label>
+            <Input
+              id="course-name"
+              placeholder="Enter course name"
+              value={courseName}
+              onChange={(e) => setCourseName(e.target.value)}
+              className="text-base"
+            />
+          </div>
           <div>
             <Label className="text-base block mb-2">Number of Holes</Label>
             <RadioGroup

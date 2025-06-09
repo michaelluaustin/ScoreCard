@@ -17,7 +17,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useGameContext } from './AppProvider';
-import { Share2 } from 'lucide-react';
+import { Share2, Camera } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export function ShareResultsModal() {
@@ -47,6 +47,8 @@ export function ShareResultsModal() {
           <div className="text-center mb-6">
             <h2 className="text-3xl font-bold font-headline mb-2">ScoreCard+</h2>
             <p className="text-muted-foreground">Golf Round Results</p>
+            <p className="text-lg font-medium mt-2">{course.name}</p>
+            <p className="text-sm text-muted-foreground mt-1">{new Date().toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' })}</p>
           </div>
           <Table>
             <TableHeader>
@@ -81,8 +83,14 @@ export function ShareResultsModal() {
               ))}
             </TableBody>
           </Table>
-          <div className="mt-6 text-center text-sm text-muted-foreground">
-            Generated with ScoreCard+
+          <div className="mt-6 text-center space-y-2">
+            <div className="flex items-center justify-center gap-2 text-primary-foreground font-medium">
+              <Camera className="h-5 w-5" />
+              <span>Screenshot this scorecard and share with friends!</span>
+            </div>
+            <div className="text-sm text-muted-foreground">
+              Generated with ScoreCard+
+            </div>
           </div>
         </div>
       </DialogContent>
