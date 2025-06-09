@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -6,7 +7,7 @@ import { useGameContext } from '@/components/AppProvider';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Trophy, Share2, RotateCcw, Users, BarChart3 } from 'lucide-react';
+import { Trophy, Share2, RotateCcw, Users, BarChart3, Flag } from 'lucide-react';
 import type { Player } from '@/lib/types';
 import { generateSummary } from '@/ai/flows/generate-summary';
 import { useToast } from '@/hooks/use-toast';
