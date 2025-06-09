@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Flag, Users, BarChart3 } from "lucide-react";
@@ -9,11 +10,13 @@ export default function HomePage() {
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-background to-secondary/50 p-4">
       <Card className="w-full max-w-md shadow-2xl rounded-xl overflow-hidden">
         <div className="relative h-48 w-full">
-          <Image 
-            src="https://images.unsplash.com/photo-1587691592099-24045742c593?auto=format&fit=crop&w=1200&q=80" 
-            alt="Scenic golf course with a flag" 
-            layout="fill" 
-            objectFit="cover"
+          <Image
+            src="https://images.unsplash.com/photo-1587691592099-24045742c593?auto=format&fit=crop&w=1200&q=80"
+            alt="Scenic golf course with a flag"
+            fill
+            style={{ objectFit: 'cover' }}
+            priority
+            data-ai-hint="golf course"
           />
           <div className="absolute inset-0 bg-primary/30 flex flex-col items-center justify-center p-6">
             <Flag className="h-16 w-16 text-primary-foreground mb-2" />
