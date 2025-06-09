@@ -10,11 +10,10 @@ export default function HomePage() {
       <Card className="w-full max-w-md shadow-2xl rounded-xl overflow-hidden">
         <div className="relative h-48 w-full">
           <Image 
-            src="https://placehold.co/600x300.png" 
-            alt="Golf course" 
+            src="https://images.unsplash.com/photo-1587691592099-24045742c593?auto=format&fit=crop&w=1200&q=80" 
+            alt="Scenic golf course with a flag" 
             layout="fill" 
             objectFit="cover"
-            data-ai-hint="golf course" 
           />
           <div className="absolute inset-0 bg-primary/30 flex flex-col items-center justify-center p-6">
             <Flag className="h-16 w-16 text-primary-foreground mb-2" />
