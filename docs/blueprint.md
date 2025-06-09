@@ -1,4 +1,4 @@
-# **App Name**: Par Score
+# **App Name**: ScoreCard+
 
 ## Core Features:
 

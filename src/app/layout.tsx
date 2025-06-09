@@ -3,7 +3,7 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
-  title: 'Par Score',
+  title: 'ScoreCard+',
   description: 'A modern golf scorecard application.',
 };
 

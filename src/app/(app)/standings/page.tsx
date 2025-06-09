@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -7,11 +6,9 @@ import { useGameContext } from '@/components/AppProvider';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Trophy, Share2, RotateCcw, Users, BarChart3, Flag } from 'lucide-react';
+import { Trophy, RotateCcw, Users, BarChart3, Flag } from 'lucide-react';
 import type { Player } from '@/lib/types';
-import { generateSummary } from '@/ai/flows/generate-summary';
-import { useToast } from '@/hooks/use-toast';
-import Image from 'next/image';
+import { ShareResultsModal } from '@/components/ShareResultsModal';
 
 interface Standing extends Player {
   totalScore: number;
@@ -19,25 +16,15 @@ interface Standing extends Player {
 }
 
 export default function StandingsPage() {
-  const { players, course, scores, getTotalPar, getPlayerTotalScore, getPlayerScoreRelativeToPar, dispatch, isRoundCompleted } = useGameContext();
+  const { players, course, scores, getTotalPar, getPlayerTotalScore, getPlayerScoreRelativeToPar, dispatch } = useGameContext();
   const router = useRouter();
-  const { toast } = useToast();
   const [standings, setStandings] = useState<Standing[]>([]);
-  const [isSharing, setIsSharing] = useState(false);
-  const [shareableSummary, setShareableSummary] = useState<string | null>(null);
 
   useEffect(() => {
     if (!course || players.length === 0 ) {
       router.replace('/'); // Go home if no game data
       return;
     }
-    // A more robust check for round completion might be needed
-    // For now, if user lands here, we assume round is done or they want to see current standings.
-    // if (!isRoundCompleted()) {
-    //   toast({ title: "Round Not Complete", description: "Finish all holes to see final standings.", variant: "default" });
-    //   router.replace(`/round/${course.holeCount - 1}`);
-    //   return;
-    // }
 
     const calculatedStandings: Standing[] = players
       .map(player => ({
@@ -49,49 +36,7 @@ export default function StandingsPage() {
     
     setStandings(calculatedStandings);
 
-  }, [players, course, scores, getPlayerTotalScore, getPlayerScoreRelativeToPar, router, toast, isRoundCompleted]);
-
-  const handleShareResults = async () => {
-    if (!course) return;
-    setIsSharing(true);
-    try {
-      const aiInputPlayers = players.map(p => p.name);
-      const aiInputScores = players.map(player => {
-        const playerScoreArray = scores[player.id] || [];
-        const playerScoreObject: Record<string, number> = {};
-        playerScoreArray.forEach((score, index) => {
-          if (score !== undefined) { // Only include defined scores
-            playerScoreObject[String(index)] = score;
-          }
-        });
-        return playerScoreObject;
-      });
-
-      const result = await generateSummary({
-        players: aiInputPlayers,
-        scores: aiInputScores,
-        pars: course.pars,
-      });
-      
-      setShareableSummary(result.summary);
-
-      if (navigator.share) {
-        await navigator.share({
-          title: 'Golf Round Results - Par Score',
-          text: result.summary,
-        });
-        toast({ title: "Results Shared!", description: "Summary copied and shared."});
-      } else {
-        navigator.clipboard.writeText(result.summary);
-        toast({ title: "Results Copied!", description: "Summary copied to clipboard. Native share not available."});
-      }
-    } catch (error) {
-      console.error('Error sharing results:', error);
-      toast({ title: "Sharing Failed", description: "Could not generate or share summary.", variant: "destructive"});
-    } finally {
-      setIsSharing(false);
-    }
-  };
+  }, [players, course, scores, getPlayerTotalScore, getPlayerScoreRelativeToPar, router]);
 
   const handlePlayAgain = () => {
     dispatch({ type: 'RESET_GAME' });
@@ -138,26 +83,13 @@ export default function StandingsPage() {
             </TableBody>
           </Table>
         </CardContent>
-         <CardFooter className="flex flex-col sm:flex-row gap-4 justify-center pt-6">
-          <Button onClick={handleShareResults} disabled={isSharing} size="lg">
-            <Share2 className="mr-2 h-5 w-5" /> {isSharing ? 'Sharing...' : 'Share Results'}
-          </Button>
+        <CardFooter className="flex flex-col sm:flex-row gap-4 justify-center pt-6">
+          <ShareResultsModal />
           <Button onClick={handlePlayAgain} variant="outline" size="lg">
             <RotateCcw className="mr-2 h-5 w-5" /> Play Again
           </Button>
         </CardFooter>
       </Card>
-
-      {shareableSummary && (
-        <Card className="w-full max-w-2xl shadow-lg">
-            <CardHeader>
-                <CardTitle>Shareable Summary</CardTitle>
-            </CardHeader>
-            <CardContent>
-                <pre className="whitespace-pre-wrap bg-muted p-4 rounded-md text-sm font-mono">{shareableSummary}</pre>
-            </CardContent>
-        </Card>
-      )}
 
       <div className="mt-4 w-full max-w-2xl grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="hover:shadow-lg transition-shadow">

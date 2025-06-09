@@ -11,7 +11,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
           <div className="container mx-auto px-4 py-3 flex items-center justify-between">
             <Link href="/" className="flex items-center gap-2 text-xl font-bold font-headline">
               <Flag className="h-7 w-7" />
-              Par Score
+              ScoreCard+
             </Link>
           </div>
         </header>
@@ -19,7 +19,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
           {children}
         </main>
         <footer className="bg-muted text-muted-foreground py-4 text-center text-sm">
-          © {new Date().getFullYear()} Par Score. Tee up your game!
+          © {new Date().getFullYear()} ScoreCard+. Tee up your game!
         </footer>
       </div>
     </AppProvider>

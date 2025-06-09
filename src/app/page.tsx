@@ -11,7 +11,7 @@ export default function HomePage() {
         <div className="relative h-48 w-full bg-primary">
           <div className="absolute inset-0 flex flex-col items-center justify-center p-6">
             <CheckSquare className="h-16 w-16 text-primary-foreground mb-2" />
-            <h1 className="text-5xl font-bold text-primary-foreground font-headline tracking-tight">Par Score</h1>
+            <h1 className="text-5xl font-bold text-primary-foreground font-headline tracking-tight">ScoreCard+</h1>
             <p className="text-lg text-primary-foreground/90 mt-1">Your Modern Golf Scorecard</p>
           </div>
         </div>
