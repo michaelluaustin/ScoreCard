@@ -30,9 +30,6 @@ export default function HomePage() {
           
         </CardContent>
       </Card>
-       <p className="mt-8 text-sm text-muted-foreground">
-        Built with Next.js & ShadCN UI
-      </p>
     </div>
   );
 }
