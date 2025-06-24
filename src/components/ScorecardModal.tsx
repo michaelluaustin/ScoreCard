@@ -56,7 +56,7 @@ export function ScorecardModal({ children }: ScorecardModalProps) {
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className={cn(
-        "max-w-[95vw] w-full flex flex-col transition-all duration-300 max-h-[90vh] overflow-hidden",
+        "max-w-[95vw] w-full flex flex-col transition-all duration-300 max-h-[90vh]",
         showFullScorecard ? "sm:max-w-2xl" : "sm:max-w-lg"
       )}>
         <DialogHeader className="flex-shrink-0">
@@ -66,7 +66,7 @@ export function ScorecardModal({ children }: ScorecardModalProps) {
           </DialogDescription>
         </DialogHeader>
         
-        <ScrollArea className="flex-grow">
+        <div className="flex-grow overflow-y-auto overflow-x-hidden">
           <div className="p-1">
             {/* Quick Summary View - Always Visible */}
             <div className="mb-4">
@@ -138,8 +138,8 @@ export function ScorecardModal({ children }: ScorecardModalProps) {
 
             {/* Full Scorecard Table - Collapsible */}
             {showFullScorecard && (
-              <div className="rounded-md border">
-                <div className="min-w-[600px] sm:min-w-0 overflow-x-auto">
+              <div className="rounded-md border overflow-x-auto">
+                <div className="min-w-[600px] sm:min-w-0">
                   <Table className="min-w-full">
                     <TableHeader className="sticky top-0 bg-background z-10">
                       <TableRow>
@@ -177,7 +177,7 @@ export function ScorecardModal({ children }: ScorecardModalProps) {
               </div>
             )}
           </div>
-        </ScrollArea>
+        </div>
 
         <div className="flex justify-center mt-4 flex-shrink-0">
           <DialogClose asChild>
