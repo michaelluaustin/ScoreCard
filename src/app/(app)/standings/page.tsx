@@ -6,7 +6,7 @@ import { useGameContext } from '@/components/AppProvider';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Trophy, RotateCcw, Users, BarChart3, Flag } from 'lucide-react';
+import { Trophy, RotateCcw, Users, BarChart3, Flag, Camera, Calendar, MapPin } from 'lucide-react';
 import type { Player } from '@/lib/types';
 import { ShareResultsModal } from '@/components/ShareResultsModal';
 import { FeedbackModal } from '@/components/FeedbackModal';
@@ -20,6 +20,7 @@ export default function StandingsPage() {
   const { players, course, scores, getTotalPar, getPlayerTotalScore, getPlayerScoreRelativeToPar, dispatch } = useGameContext();
   const router = useRouter();
   const [standings, setStandings] = useState<Standing[]>([]);
+  const [roundStartTime, setRoundStartTime] = useState<string>('');
 
   useEffect(() => {
     if (!course || players.length === 0 ) {
@@ -36,6 +37,14 @@ export default function StandingsPage() {
       .sort((a, b) => a.totalScore - b.totalScore); // Sort by lowest score
     
     setStandings(calculatedStandings);
+
+    // Set round start time (you could store this in context if needed)
+    setRoundStartTime(new Date().toLocaleDateString('en-US', { 
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    }));
 
   }, [players, course, scores, getPlayerTotalScore, getPlayerScoreRelativeToPar, router]);
 
@@ -83,6 +92,21 @@ export default function StandingsPage() {
               ))}
             </TableBody>
           </Table>
+          
+          {/* Round info and sharing instructions - small text under table */}
+          <div className="mt-6 pt-4 border-t space-y-2 text-center">
+            <div className="text-sm text-muted-foreground space-y-1">
+              <div>{course.name} • {roundStartTime}</div>
+              <div>{players.length} players • {course.holeCount} holes</div>
+            </div>
+            <div className="text-xs text-muted-foreground flex items-center justify-center gap-1">
+              <Camera className="h-3 w-3" />
+              Screenshot to share with friends
+            </div>
+            <div className="text-xs text-muted-foreground">
+              Generated with ScoreCard+
+            </div>
+          </div>
         </CardContent>
         <CardFooter className="flex flex-col sm:flex-row gap-4 justify-center pt-6">
           <Button onClick={handlePlayAgain} variant="outline" size="lg">
