@@ -107,7 +107,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   };
 
   const getPlayerTotalScore = (playerId: string): number => {
-    return (state.scores[playerId] || []).reduce((sum, score) => sum + (score ?? 0), 0);
+    return (state.scores[playerId] || []).reduce((sum: number, score) => sum + (score ?? 0), 0);
   };
 
   const getPlayerScoreRelativeToPar = (playerId: string): string => {
