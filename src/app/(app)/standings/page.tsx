@@ -9,6 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Trophy, RotateCcw, Users, BarChart3, Flag } from 'lucide-react';
 import type { Player } from '@/lib/types';
 import { ShareResultsModal } from '@/components/ShareResultsModal';
+import { FeedbackModal } from '@/components/FeedbackModal';
 
 interface Standing extends Player {
   totalScore: number;
@@ -84,10 +85,11 @@ export default function StandingsPage() {
           </Table>
         </CardContent>
         <CardFooter className="flex flex-col sm:flex-row gap-4 justify-center pt-6">
-          <ShareResultsModal />
           <Button onClick={handlePlayAgain} variant="outline" size="lg">
             <RotateCcw className="mr-2 h-5 w-5" /> Play Again
           </Button>
+          <ShareResultsModal />
+          <FeedbackModal />
         </CardFooter>
       </Card>
 
