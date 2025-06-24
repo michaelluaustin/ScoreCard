@@ -56,132 +56,130 @@ export function ScorecardModal({ children }: ScorecardModalProps) {
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className={cn(
-        "max-w-[95vw] w-full flex flex-col transition-all duration-300",
+        "max-w-[95vw] w-full flex flex-col transition-all duration-300 max-h-[90vh] overflow-hidden",
         showFullScorecard ? "sm:max-w-2xl" : "sm:max-w-lg"
       )}>
-        <DialogHeader>
+        <DialogHeader className="flex-shrink-0">
           <DialogTitle className="text-xl sm:text-2xl font-headline">Scorecard</DialogTitle>
           <DialogDescription>
             Current scores and totals for all players
           </DialogDescription>
         </DialogHeader>
         
-        <div className={cn(
-          "flex-grow overflow-hidden transition-all duration-300",
-          showFullScorecard ? "min-h-[400px]" : "min-h-[200px]"
-        )}>
-          {/* Quick Summary View - Always Visible */}
-          <div className="mb-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {sortedPlayers.map((player, index) => {
-                const totalScore = getPlayerTotalScore(player.id);
-                const relativeToPar = getPlayerScoreRelativeToPar(player.id);
-                const isLeading = index === 0;
-                
-                return (
-                  <Card key={player.id} className={cn(
-                    "transition-all duration-200",
-                    isLeading && "border-2 border-amber-400 bg-amber-50 dark:bg-amber-950/20 shadow-lg"
-                  )}>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-sm sm:text-base flex items-center gap-2">
-                        {isLeading && <Trophy className="h-4 w-4 text-amber-500" />}
-                        {player.name}
-                        {isLeading && <span className="text-xs text-amber-600 dark:text-amber-400">(Leading)</span>}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="pt-0">
-                      <div className="flex justify-between items-center">
-                        <div>
-                          <div className="text-2xl sm:text-3xl font-bold font-mono">
-                            {totalScore}
+        <ScrollArea className="flex-grow">
+          <div className="p-1">
+            {/* Quick Summary View - Always Visible */}
+            <div className="mb-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {sortedPlayers.map((player, index) => {
+                  const totalScore = getPlayerTotalScore(player.id);
+                  const relativeToPar = getPlayerScoreRelativeToPar(player.id);
+                  const isLeading = index === 0;
+                  
+                  return (
+                    <Card key={player.id} className={cn(
+                      "transition-all duration-200",
+                      isLeading && "border-2 border-amber-400 bg-amber-50 dark:bg-amber-950/20 shadow-lg"
+                    )}>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm sm:text-base flex items-center gap-2">
+                          {isLeading && <Trophy className="h-4 w-4 text-amber-500" />}
+                          {player.name}
+                          {isLeading && <span className="text-xs text-amber-600 dark:text-amber-400">(Leading)</span>}
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="pt-0">
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <div className="text-2xl sm:text-3xl font-bold font-mono">
+                              {totalScore}
+                            </div>
+                            <div className="text-sm text-muted-foreground">Total Strokes</div>
                           </div>
-                          <div className="text-sm text-muted-foreground">Total Strokes</div>
-                        </div>
-                        <div className="text-right">
-                          <div className={cn(
-                            "text-lg sm:text-xl font-bold font-mono",
-                            relativeToPar === 'E' ? "text-gray-600" :
-                            relativeToPar.startsWith('+') ? "text-red-600" : "text-green-600"
-                          )}>
-                            {relativeToPar}
+                          <div className="text-right">
+                            <div className={cn(
+                              "text-lg sm:text-xl font-bold font-mono",
+                              relativeToPar === 'E' ? "text-gray-600" :
+                              relativeToPar.startsWith('+') ? "text-red-600" : "text-green-600"
+                            )}>
+                              {relativeToPar}
+                            </div>
+                            <div className="text-sm text-muted-foreground">To Par</div>
                           </div>
-                          <div className="text-sm text-muted-foreground">To Par</div>
                         </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Toggle Button */}
-          <div className="flex justify-center mb-4">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowFullScorecard(!showFullScorecard)}
-              className="flex items-center gap-2"
-            >
-              {showFullScorecard ? (
-                <>
-                  <EyeOff className="h-4 w-4" />
-                  Hide Full Scorecard
-                </>
-              ) : (
-                <>
-                  <Eye className="h-4 w-4" />
-                  Show Full Scorecard
-                </>
-              )}
-            </Button>
-          </div>
-
-          {/* Full Scorecard Table - Collapsible */}
-          {showFullScorecard && (
-            <ScrollArea className="flex-grow rounded-md border">
-              <div className="min-w-[600px] sm:min-w-0">
-                <Table className="min-w-full">
-                  <TableHeader className="sticky top-0 bg-background z-10">
-                    <TableRow>
-                      <TableHead className="w-[120px] sm:w-[150px] font-semibold text-sm">Player</TableHead>
-                      {[...Array(course.holeCount)].map((_, holeIndex) => (
-                        <TableHead key={holeIndex} className="text-center min-w-[50px] sm:min-w-[60px]">
-                          <div className="text-xs sm:text-sm">{holeIndex + 1}</div>
-                          <div className="text-xs text-muted-foreground">Par {getParForHole(holeIndex)}</div>
-                        </TableHead>
-                      ))}
-                      <TableHead className="text-center font-semibold min-w-[60px] sm:min-w-[80px] text-sm">Total</TableHead>
-                      <TableHead className="text-center font-semibold min-w-[60px] sm:min-w-[80px] text-sm">To Par</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {players.map((player: Player) => (
-                      <TableRow key={player.id}>
-                        <TableCell className="font-medium text-sm">{player.name}</TableCell>
-                        {[...Array(course.holeCount)].map((_, holeIndex) => {
-                          const score = scores[player.id]?.[holeIndex];
-                          const par = getParForHole(holeIndex);
-                          return (
-                            <TableCell key={holeIndex} className={cn("text-center font-mono text-sm", getCellClass(score, par))}>
-                              {score ?? '-'}
-                            </TableCell>
-                          );
-                        })}
-                        <TableCell className="text-center font-semibold font-mono text-sm">{getPlayerTotalScore(player.id)}</TableCell>
-                        <TableCell className="text-center font-semibold font-mono text-sm">{getPlayerScoreRelativeToPar(player.id)}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
               </div>
-              <ScrollBar orientation="horizontal" />
-            </ScrollArea>
-          )}
-        </div>
+            </div>
 
-        <div className="flex justify-center mt-4">
+            {/* Toggle Button */}
+            <div className="flex justify-center mb-4">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowFullScorecard(!showFullScorecard)}
+                className="flex items-center gap-2"
+              >
+                {showFullScorecard ? (
+                  <>
+                    <EyeOff className="h-4 w-4" />
+                    Hide Full Scorecard
+                  </>
+                ) : (
+                  <>
+                    <Eye className="h-4 w-4" />
+                    Show Full Scorecard
+                  </>
+                )}
+              </Button>
+            </div>
+
+            {/* Full Scorecard Table - Collapsible */}
+            {showFullScorecard && (
+              <div className="rounded-md border">
+                <div className="min-w-[600px] sm:min-w-0 overflow-x-auto">
+                  <Table className="min-w-full">
+                    <TableHeader className="sticky top-0 bg-background z-10">
+                      <TableRow>
+                        <TableHead className="w-[120px] sm:w-[150px] font-semibold text-sm">Player</TableHead>
+                        {[...Array(course.holeCount)].map((_, holeIndex) => (
+                          <TableHead key={holeIndex} className="text-center min-w-[50px] sm:min-w-[60px]">
+                            <div className="text-xs sm:text-sm">{holeIndex + 1}</div>
+                            <div className="text-xs text-muted-foreground">Par {getParForHole(holeIndex)}</div>
+                          </TableHead>
+                        ))}
+                        <TableHead className="text-center font-semibold min-w-[60px] sm:min-w-[80px] text-sm">Total</TableHead>
+                        <TableHead className="text-center font-semibold min-w-[60px] sm:min-w-[80px] text-sm">To Par</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {players.map((player: Player) => (
+                        <TableRow key={player.id}>
+                          <TableCell className="font-medium text-sm">{player.name}</TableCell>
+                          {[...Array(course.holeCount)].map((_, holeIndex) => {
+                            const score = scores[player.id]?.[holeIndex];
+                            const par = getParForHole(holeIndex);
+                            return (
+                              <TableCell key={holeIndex} className={cn("text-center font-mono text-sm", getCellClass(score, par))}>
+                                {score ?? '-'}
+                              </TableCell>
+                            );
+                          })}
+                          <TableCell className="text-center font-semibold font-mono text-sm">{getPlayerTotalScore(player.id)}</TableCell>
+                          <TableCell className="text-center font-semibold font-mono text-sm">{getPlayerScoreRelativeToPar(player.id)}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+            )}
+          </div>
+        </ScrollArea>
+
+        <div className="flex justify-center mt-4 flex-shrink-0">
           <DialogClose asChild>
             <Button type="button" variant="outline">
               Close
