@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useGameContext } from '@/components/AppProvider';
 import { Button } from '@/components/ui/button';
@@ -10,6 +10,7 @@ import { Trophy, RotateCcw, Users, BarChart3, Flag, Camera, Calendar, MapPin } f
 import type { Player } from '@/lib/types';
 import { ShareResultsModal } from '@/components/ShareResultsModal';
 import { FeedbackModal } from '@/components/FeedbackModal';
+import { NativeShareButton } from '@/components/NativeShareButton';
 
 interface Standing extends Player {
   totalScore: number;
@@ -21,6 +22,7 @@ export default function StandingsPage() {
   const router = useRouter();
   const [standings, setStandings] = useState<Standing[]>([]);
   const [roundStartTime, setRoundStartTime] = useState<string>('');
+  const standingsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!course || players.length === 0 ) {
@@ -61,7 +63,7 @@ export default function StandingsPage() {
 
   return (
     <div className="flex flex-col items-center py-8 gap-8">
-      <Card className="w-full max-w-2xl shadow-xl">
+      <Card ref={standingsRef} className="w-full max-w-2xl shadow-xl">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
             <Trophy className="h-16 w-16 text-amber-400" />
@@ -112,7 +114,7 @@ export default function StandingsPage() {
           <Button onClick={handlePlayAgain} variant="outline" size="lg">
             <RotateCcw className="mr-2 h-5 w-5" /> Play Again
           </Button>
-          <ShareResultsModal />
+          <NativeShareButton standingsRef={standingsRef} />
           <FeedbackModal />
         </CardFooter>
       </Card>
