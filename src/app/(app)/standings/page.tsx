@@ -101,11 +101,7 @@ export default function StandingsPage() {
               <div>{course.name} • {roundStartTime}</div>
               <div>{players.length} players • {course.holeCount} holes</div>
             </div>
-            <div className="text-xs text-muted-foreground flex items-center justify-center gap-1">
-              <Camera className="h-3 w-3" />
-              Screenshot to share with friends
-            </div>
-            <div className="text-xs text-muted-foreground">
+            <div className="text-sm text-muted-foreground">
               Generated with ScoreCard+
             </div>
           </div>
