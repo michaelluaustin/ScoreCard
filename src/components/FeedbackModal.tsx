@@ -19,6 +19,7 @@ export function FeedbackModal() {
   const [isOpen, setIsOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -61,30 +62,54 @@ export function FeedbackModal() {
     }
   };
 
-  const handleSubmit = () => {
-    // Here you would typically send the feedback to your backend
-    console.log('Feedback submitted:', { rating, feedback });
+  const handleSubmit = async () => {
+    if (rating === 0) return;
     
-    // Show celebration popup
-    setShowCelebration(true);
+    setIsSubmitting(true);
     
-    // Trigger confetti
-    createConfetti();
-    
-    // Show toast notification
-    toast({
-      title: "Feedback Submitted!",
-      description: "Thank you for your feedback. We appreciate it!",
-    });
-    
-    // Close celebration after 3 seconds
-    setTimeout(() => {
-      setShowCelebration(false);
-      // Reset form and close modal
-      setRating(0);
-      setFeedback('');
-      setIsOpen(false);
-    }, 3000);
+    try {
+      const response = await fetch('/api/feedback', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ rating, feedback }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to send feedback');
+      }
+
+      // Show celebration popup
+      setShowCelebration(true);
+      
+      // Trigger confetti
+      createConfetti();
+      
+      // Show toast notification
+      toast({
+        title: "Feedback Submitted!",
+        description: "Thank you for your feedback. We appreciate it!",
+      });
+      
+      // Close celebration after 3 seconds
+      setTimeout(() => {
+        setShowCelebration(false);
+        // Reset form and close modal
+        setRating(0);
+        setFeedback('');
+        setIsOpen(false);
+      }, 3000);
+    } catch (error) {
+      console.error('Error submitting feedback:', error);
+      toast({
+        title: "Error",
+        description: "Failed to send feedback. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const renderStars = () => {
@@ -163,10 +188,10 @@ export function FeedbackModal() {
               </Button>
               <Button
                 onClick={handleSubmit}
-                disabled={rating === 0}
+                disabled={rating === 0 || isSubmitting}
                 className="flex-1"
               >
-                Submit Feedback
+                {isSubmitting ? 'Sending...' : 'Submit Feedback'}
               </Button>
             </div>
           </div>
