@@ -7,6 +7,7 @@ export interface Course {
   holeCount: 9 | 18;
   pars: number[];
   name: string;
+  parInputMode: 'all-at-once' | 'as-you-go';
 }
 
 export interface Scores {
@@ -27,6 +28,7 @@ export type GameAction =
   | { type: 'SET_COURSE'; payload: Course }
   | { type: 'SET_SCORE'; payload: { playerId: string; holeIndex: number; score: number | undefined } }
   | { type: 'SET_CURRENT_HOLE_INDEX'; payload: number }
+  | { type: 'SET_HOLE_PAR'; payload: { holeIndex: number; par: number } }
   | { type: 'RESET_GAME' };
 
 export interface GameContextType extends GameState {

@@ -18,6 +18,7 @@ export default function CourseSetupPage() {
   const [holeCount, setHoleCount] = useState<'9' | '18'>(course?.holeCount === 18 ? '18' : '9');
   const [pars, setPars] = useState< (number | string)[]>([]);
   const [courseName, setCourseName] = useState(course?.name || '');
+  const [parInputMode, setParInputMode] = useState<'all-at-once' | 'as-you-go'>(course?.parInputMode || 'all-at-once');
   const router = useRouter();
   const { toast } = useToast();
 
@@ -45,15 +46,19 @@ export default function CourseSetupPage() {
 
   const handleSubmit = () => {
     const numHoles = parseInt(holeCount);
-    const parsedPars = pars.map(p => parseInt(p as string, 10));
+    
+    // Validate pars only if using all-at-once mode
+    if (parInputMode === 'all-at-once') {
+      const parsedPars = pars.map(p => parseInt(p as string, 10));
 
-    if (parsedPars.some(isNaN) || parsedPars.some(p => p < 1 || p > 10)) { // Assuming par is generally <= 10
-      toast({
-        title: "Invalid Par Values",
-        description: "Please enter valid par values (1-10) for all holes.",
-        variant: "destructive",
-      });
-      return;
+      if (parsedPars.some(isNaN) || parsedPars.some(p => p < 1 || p > 10)) { // Assuming par is generally <= 10
+        toast({
+          title: "Invalid Par Values",
+          description: "Please enter valid par values (1-10) for all holes.",
+          variant: "destructive",
+        });
+        return;
+      }
     }
 
     if (!courseName.trim()) {
@@ -67,8 +72,9 @@ export default function CourseSetupPage() {
 
     const newCourse: Course = {
       holeCount: numHoles as 9 | 18,
-      pars: parsedPars,
+      pars: parInputMode === 'all-at-once' ? pars.map(p => parseInt(p as string, 10)) : Array(numHoles).fill(0),
       name: courseName.trim(),
+      parInputMode,
     };
     dispatch({ type: 'SET_COURSE', payload: newCourse });
     router.push('/round/0'); // Start at hole 0 (first hole)
@@ -82,7 +88,7 @@ export default function CourseSetupPage() {
             <Settings2 className="h-8 w-8 text-primary" />
             Course Setup
           </CardTitle>
-          <CardDescription>Select the number of holes and enter the par for each hole.</CardDescription>
+          <CardDescription>Select the number of holes and choose how you want to input par values.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div>
@@ -114,27 +120,53 @@ export default function CourseSetupPage() {
           </div>
 
           <div>
-            <Label className="text-base block mb-2">Par for Each Hole</Label>
-            <ScrollArea className="h-[300px] w-full rounded-md border p-4">
-              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4">
-                {pars.map((par, index) => (
-                  <div key={index} className="space-y-1">
-                    <Label htmlFor={`par-${index}`} className="text-sm">Hole {index + 1}</Label>
-                    <Input
-                      id={`par-${index}`}
-                      type="number"
-                      min="1"
-                      max="10"
-                      value={par}
-                      onChange={(e) => handleParChange(index, e.target.value)}
-                      placeholder="Par"
-                      className="text-center"
-                    />
-                  </div>
-                ))}
+            <Label className="text-base block mb-2">Par Input Mode</Label>
+            <RadioGroup
+              value={parInputMode}
+              onValueChange={(value: 'all-at-once' | 'as-you-go') => setParInputMode(value)}
+              className="flex gap-4"
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="all-at-once" id="par-input-mode-all-at-once" />
+                <Label htmlFor="par-input-mode-all-at-once" className="text-base">Input All Pars Now</Label>
               </div>
-            </ScrollArea>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="as-you-go" id="par-input-mode-as-you-go" />
+                <Label htmlFor="par-input-mode-as-you-go" className="text-base">Input Par As You Go</Label>
+              </div>
+            </RadioGroup>
+            <div className="mt-2 text-sm text-muted-foreground">
+              {parInputMode === 'all-at-once' 
+                ? 'Enter all par values before starting the round. You can still edit them later during the round.'
+                : 'Enter par values for each hole as you play. You can set or edit the par for each hole individually.'
+              }
+            </div>
           </div>
+
+          {parInputMode === 'all-at-once' && (
+            <div>
+              <Label className="text-base block mb-2">Par for Each Hole</Label>
+              <ScrollArea className="h-[300px] w-full rounded-md border p-4">
+                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4">
+                  {pars.map((par, index) => (
+                    <div key={index} className="space-y-1">
+                      <Label htmlFor={`par-${index}`} className="text-sm">Hole {index + 1}</Label>
+                      <Input
+                        id={`par-${index}`}
+                        type="number"
+                        min="1"
+                        max="10"
+                        value={par}
+                        onChange={(e) => handleParChange(index, e.target.value)}
+                        placeholder="Par"
+                        className="text-center"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </ScrollArea>
+            </div>
+          )}
         </CardContent>
         <CardFooter>
           <Button onClick={handleSubmit} size="lg" className="w-full text-lg">

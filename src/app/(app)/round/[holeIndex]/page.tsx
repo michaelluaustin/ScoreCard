@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useGameContext } from '@/components/AppProvider';
 import { Button } from '@/components/ui/button';
@@ -24,8 +24,9 @@ export default function HoleEntryPage() {
     getParForHole 
   } = useGameContext();
   const { toast } = useToast();
+  const [parInputValue, setParInputValue] = useState<string>('');
 
-  const holeIndex = parseInt(params.holeIndex as string, 10);
+  const holeIndex = params?.holeIndex ? parseInt(params.holeIndex as string, 10) : 0;
 
   useEffect(() => {
     if (isNaN(holeIndex) || !course || holeIndex < 0 || holeIndex >= course.holeCount) {
@@ -38,6 +39,12 @@ export default function HoleEntryPage() {
       dispatch({ type: 'SET_CURRENT_HOLE_INDEX', payload: holeIndex });
     }
   }, [holeIndex, course, dispatch, router, currentHoleIndex]);
+
+  // Sync input value with current par
+  useEffect(() => {
+    const currentPar = getParForHole(holeIndex);
+    setParInputValue(currentPar?.toString() || '');
+  }, [holeIndex, getParForHole]);
 
   if (!course || players.length === 0) {
     // This should ideally be caught by redirects in useEffect, but as a fallback:
@@ -58,6 +65,22 @@ export default function HoleEntryPage() {
        return;
     }
     dispatch({ type: 'SET_SCORE', payload: { playerId, holeIndex, score } });
+  };
+
+  const handleParChange = (value: string) => {
+    // Always update local state immediately for responsive editing
+    setParInputValue(value);
+    
+    if (value === '') {
+      // Allow empty value - don't update the par
+      return;
+    }
+    const par = parseInt(value, 10);
+    if (isNaN(par) || par < 1 || par > 10) {
+      // Don't show toast for invalid input while typing, only when they finish
+      return;
+    }
+    dispatch({ type: 'SET_HOLE_PAR', payload: { holeIndex, par } });
   };
 
   const handleNextHole = () => {
@@ -84,13 +107,28 @@ export default function HoleEntryPage() {
     <div className="flex justify-center items-start py-8">
       <Card className="w-full max-w-2xl shadow-xl">
         <CardHeader>
-          <CardTitle className="text-3xl font-headline flex items-center gap-2">
-            <Flag className="h-8 w-8 text-primary" />
-            Hole {holeIndex + 1} <span className="text-2xl text-muted-foreground">of {course.holeCount}</span>
-          </CardTitle>
-          <CardDescription className="text-lg">
-            Par for this hole: <span className="font-semibold text-primary">{parForCurrentHole ?? 'N/A'}</span>
-          </CardDescription>
+          <div className="flex justify-between items-start">
+            <div>
+              <CardTitle className="text-3xl font-headline flex items-center gap-2">
+                <Flag className="h-8 w-8 text-primary" />
+                Hole {holeIndex + 1} <span className="text-2xl text-muted-foreground">of {course.holeCount}</span>
+              </CardTitle>
+              <CardDescription className="text-lg mt-2">
+                Enter scores for each player below
+              </CardDescription>
+            </div>
+            <div className="flex items-center gap-2">
+              <Label htmlFor="hole-par" className="text-base font-semibold">Par:</Label>
+              <Input
+                id="hole-par"
+                type="number"
+                value={parInputValue}
+                onChange={(e) => handleParChange(e.target.value)}
+                placeholder="Par"
+                className="w-20 text-center"
+              />
+            </div>
+          </div>
         </CardHeader>
         <CardContent className="space-y-6">
           {players.map((player: Player) => (

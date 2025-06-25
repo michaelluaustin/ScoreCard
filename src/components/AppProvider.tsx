@@ -51,6 +51,17 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       };
     case 'SET_CURRENT_HOLE_INDEX':
       return { ...state, currentHoleIndex: action.payload };
+    case 'SET_HOLE_PAR':
+      if (!state.course) return state;
+      const updatedPars = [...state.course.pars];
+      updatedPars[action.payload.holeIndex] = action.payload.par;
+      return {
+        ...state,
+        course: {
+          ...state.course,
+          pars: updatedPars,
+        },
+      };
     case 'RESET_GAME':
       return { ...initialState, players: [] }; // Keep players or reset fully? For now, full reset.
     default:
