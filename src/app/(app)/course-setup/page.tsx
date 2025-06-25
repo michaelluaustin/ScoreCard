@@ -18,7 +18,7 @@ export default function CourseSetupPage() {
   const [holeCount, setHoleCount] = useState<'9' | '18'>(course?.holeCount === 18 ? '18' : '9');
   const [pars, setPars] = useState< (number | string)[]>([]);
   const [courseName, setCourseName] = useState(course?.name || '');
-  const [parInputMode, setParInputMode] = useState<'all-at-once' | 'as-you-go'>(course?.parInputMode || 'all-at-once');
+  const [parInputMode, setParInputMode] = useState<'all-at-once' | 'as-you-go'>(course?.parInputMode || 'as-you-go');
   const router = useRouter();
   const { toast } = useToast();
 
@@ -127,12 +127,12 @@ export default function CourseSetupPage() {
               className="flex gap-4"
             >
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="all-at-once" id="par-input-mode-all-at-once" />
-                <Label htmlFor="par-input-mode-all-at-once" className="text-base">Input All Pars Now</Label>
-              </div>
-              <div className="flex items-center space-x-2">
                 <RadioGroupItem value="as-you-go" id="par-input-mode-as-you-go" />
                 <Label htmlFor="par-input-mode-as-you-go" className="text-base">Input Par As You Go</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="all-at-once" id="par-input-mode-all-at-once" />
+                <Label htmlFor="par-input-mode-all-at-once" className="text-base">Input All Pars Now</Label>
               </div>
             </RadioGroup>
             <div className="mt-2 text-sm text-muted-foreground">
