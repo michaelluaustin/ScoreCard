@@ -28,6 +28,13 @@ export function NativeShareButton({ standingsRef }: NativeShareButtonProps) {
     const safePlayers = players as Player[];
     const safeCourse = course as Course;
 
+    // Sort players by total score (best first)
+    const sortedPlayers = [...safePlayers].sort((a, b) => {
+      const scoreA = getPlayerTotalScore(a.id);
+      const scoreB = getPlayerTotalScore(b.id);
+      return scoreA - scoreB;
+    });
+
     setIsGenerating(true);
 
     try {
@@ -63,9 +70,9 @@ export function NativeShareButton({ standingsRef }: NativeShareButtonProps) {
 
       // --- Estimate height ---
       let estHeight = padding + 60 + sectionSpacing + // Title + subtitle
-        tableHeaderHeight + playersCount * playerRowHeight + sectionSpacing + // Standings
+        tableHeaderHeight + sortedPlayers.length * playerRowHeight + sectionSpacing + // Standings
         32 + // Detailed Scorecard title
-        (tableHeaderHeight + playersCount * playerRowHeight) * 2 + // Two tables
+        (tableHeaderHeight + sortedPlayers.length * playerRowHeight) * 2 + // Two tables
         tableSpacing + sectionSpacing + 60; // Footer
 
       // --- Create canvas ---
@@ -107,7 +114,7 @@ export function NativeShareButton({ standingsRef }: NativeShareButtonProps) {
       ctx.fillText('To Par (9)', standingsStartX + standingsCols[0] + standingsCols[1] + standingsCols[2] + standingsCols[3] - 10, yOffset + 28);
       yOffset += tableHeaderHeight;
       // Rows
-      safePlayers.forEach((player, index) => {
+      sortedPlayers.forEach((player, index) => {
         const totalScore = getPlayerTotalScore(player.id);
         const relativeToPar = getPlayerScoreRelativeToPar(player.id);
         const isWinner = index === 0;
@@ -161,7 +168,7 @@ export function NativeShareButton({ standingsRef }: NativeShareButtonProps) {
       ctx.fillText('To Par', tableStartX + playerColWidth + front9 * holeColWidth + totalColWidth + totalColWidth / 2, yOffset + 26);
       yOffset += tableHeaderHeight;
       // Rows
-      safePlayers.forEach((player) => {
+      sortedPlayers.forEach((player) => {
         ctx.textAlign = 'left';
         ctx.fillStyle = '#fff';
         ctx.fillRect(tableStartX, yOffset, front9TableWidth, playerRowHeight);
@@ -220,7 +227,7 @@ export function NativeShareButton({ standingsRef }: NativeShareButtonProps) {
       ctx.fillText('Total (18)', tableStartX + playerColWidth + back9 * holeColWidth + 2 * totalColWidth + totalAllColWidth / 2, yOffset + 26);
       ctx.fillText('To Par (18)', tableStartX + playerColWidth + back9 * holeColWidth + 2 * totalColWidth + totalAllColWidth + gapWidth + toParAllColWidth / 2, yOffset + 26);
       yOffset += tableHeaderHeight;
-      safePlayers.forEach((player) => {
+      sortedPlayers.forEach((player) => {
         ctx.textAlign = 'left';
         ctx.fillStyle = '#fff';
         ctx.fillRect(tableStartX, yOffset, back9TableWidth, playerRowHeight);
@@ -263,7 +270,7 @@ export function NativeShareButton({ standingsRef }: NativeShareButtonProps) {
       ctx.fillText('Generated with ScoreCard+', width / 2, yOffset);
       ctx.font = `13px ${font}`;
       ctx.fillStyle = '#9ca3af';
-      ctx.fillText(`${safePlayers.length} players • ${safeCourse.holeCount} holes`, width / 2, yOffset + 22);
+      ctx.fillText(`${sortedPlayers.length} players • ${safeCourse.holeCount} holes`, width / 2, yOffset + 22);
 
       // --- Crop canvas to content ---
       const cropped = document.createElement('canvas');

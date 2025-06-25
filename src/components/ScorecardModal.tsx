@@ -155,7 +155,7 @@ export function ScorecardModal({ children }: ScorecardModalProps) {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {players.map((player: Player) => (
+                      {sortedPlayers.map((player: Player) => (
                         <TableRow key={player.id}>
                           <TableCell className="font-medium text-sm">{player.name}</TableCell>
                           {[...Array(course.holeCount)].map((_, holeIndex) => {

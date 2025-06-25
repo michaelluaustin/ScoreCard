@@ -32,6 +32,13 @@ export function ShareResultsModal() {
     return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-100';
   };
 
+  // Sort players by total score (best first)
+  const sortedPlayers = [...players].sort((a, b) => {
+    const scoreA = getPlayerTotalScore(a.id);
+    const scoreB = getPlayerTotalScore(b.id);
+    return scoreA - scoreB;
+  });
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -65,7 +72,7 @@ export function ShareResultsModal() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {players.map((player) => (
+              {sortedPlayers.map((player) => (
                 <TableRow key={player.id}>
                   <TableCell className="font-medium">{player.name}</TableCell>
                   {[...Array(course.holeCount)].map((_, holeIndex) => {
